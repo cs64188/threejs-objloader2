@@ -1,0 +1,34 @@
+before_script:
+  - npm version
+  - ansible --version
+  
+variables:
+  PROJ_NAME : "threejs-vr2"
+  ## dev
+  DEV_HOST_IP : "websrv01,"
+  DEV_HOST_USER : "shine-tes"
+  DEV_DEST_DIR : "/data/www/demo/threejs-vr2"
+cache:
+  paths: 
+    - node_modules/
+    - dist/
+
+stages:
+  - build
+  - deploy
+
+build_all:
+  stage: build
+  script:
+    - npm install
+    - npm run build
+  only:
+    - master
+
+deploy2dev:
+  stage: deploy
+  script:
+    - cp /data/autodeploy/launch_static.sh ./
+    - sh launch_static.sh dev dist/
+  only:
+    - master
